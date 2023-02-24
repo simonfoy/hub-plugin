@@ -1,5 +1,7 @@
 server-name: "Server Name"
 
+server-compass-slot: 0
+
 servers:
   0:
     name: "Duels"

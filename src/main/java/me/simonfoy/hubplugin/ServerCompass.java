@@ -109,7 +109,8 @@ public class ServerCompass implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent e) {
         Player player = e.getPlayer();
-        player.getInventory().setItem(0, compassItem);
+        int slot = hubPlugin.getConfig().getInt("server-compass-slot");
+        player.getInventory().setItem(slot, compassItem);
     }
 }
 
