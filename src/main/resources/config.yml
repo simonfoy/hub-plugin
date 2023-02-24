@@ -1,0 +1,15 @@
+server-name: "Server Name"
+
+servers:
+  0:
+    name: "Duels"
+    slot: 0
+    item: "fishing_rod"
+  1:
+    name: "Survival"
+    slot: 1
+    item: "diamond_sword"
+  2:
+    name: "Creative"
+    slot: 2
+    item: "grass_block"

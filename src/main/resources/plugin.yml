@@ -1,0 +1,6 @@
+name: HubPlugin
+version: '${project.version}'
+main: me.simonfoy.hubplugin.HubPlugin
+api-version: 1.19
+authors: [ Simon ]
+website: simonfoy.me
