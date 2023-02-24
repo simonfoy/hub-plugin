@@ -26,6 +26,7 @@ public class ServerCompass implements Listener {
     private HubPlugin hubPlugin;
     private ItemStack compassItem;
     private Map<Integer, String> serverSlots;
+    private Map<Integer, String> serverIds;
 
     public ServerCompass(HubPlugin hubPlugin) {
         this.hubPlugin = hubPlugin;
@@ -41,11 +42,14 @@ public class ServerCompass implements Listener {
         compassItem.setItemMeta(meta);
 
         serverSlots = new HashMap<>();
-        ConfigurationSection section = hubPlugin.getConfig().getConfigurationSection("servers");
-        for (String key : section.getKeys(false)) {
-            int slot = section.getInt(key + ".slot");
-            String name = section.getString(key + ".name");
+        serverIds = new HashMap<>();
+        ConfigurationSection serversSection = hubPlugin.getConfig().getConfigurationSection("servers");
+        for (String serverId : serversSection.getKeys(false)) {
+            ConfigurationSection serverSection = serversSection.getConfigurationSection(serverId);
+            int slot = serverSection.getInt("slot");
+            String name = serverSection.getString("name");
             serverSlots.put(slot, name);
+            serverIds.put(slot, serverId);
         }
     }
 
@@ -59,9 +63,10 @@ public class ServerCompass implements Listener {
 
             for (int slot : serverSlots.keySet()) {
                 String serverName = serverSlots.get(slot);
+                String serverId = serverIds.get(slot);
 
                 ItemStack serverItem;
-                String material = hubPlugin.getConfig().getString("servers." + slot + ".item");
+                String material = hubPlugin.getConfig().getString("servers." + serverId + ".item");
                 if (material == null) {
                     serverItem = new ItemStack(Material.AIR);
                 } else {
@@ -69,6 +74,9 @@ public class ServerCompass implements Listener {
                 }
                 ItemMeta meta = serverItem.getItemMeta();
                 meta.setDisplayName(ChatColor.YELLOW + serverName);
+                List<String> lore = new ArrayList<>();
+                lore.add(ChatColor.GRAY + "Click to connect to " + serverName);
+                meta.setLore(lore);
                 serverItem.setItemMeta(meta);
 
                 inv.setItem(slot, serverItem);
