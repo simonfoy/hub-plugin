@@ -2,6 +2,7 @@ package me.simonfoy.hubplugin;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
@@ -109,6 +110,9 @@ public class ServerCompass implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent e) {
         Player player = e.getPlayer();
+        player.setGameMode(GameMode.ADVENTURE);
+        Inventory inventory = e.getPlayer().getInventory();
+        inventory.clear();
         int slot = hubPlugin.getConfig().getInt("server-compass-slot");
         player.getInventory().setItem(slot, compassItem);
     }
