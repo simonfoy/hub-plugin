@@ -8,10 +8,12 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -116,13 +118,39 @@ public class ServerCompass implements Listener {
     }
 
     @EventHandler
+    public void onNumberKeyInventoryClick(InventoryClickEvent event) {
+        if (event.getClick() == ClickType.NUMBER_KEY) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onPlayerSwapHandItems(PlayerSwapHandItemsEvent event) {
+        ItemStack item = event.getOffHandItem();
+        if (item != null && item.getType() == Material.COMPASS && item.hasItemMeta()) {
+            ItemMeta meta = item.getItemMeta();
+            if (meta.hasDisplayName() && meta.getDisplayName().equals(ChatColor.YELLOW + "Server Selector")) {
+                event.setCancelled(true);
+            }
+        }
+    }
+
+    @EventHandler
     public void onPlayerJoin(PlayerJoinEvent e) {
         Player player = e.getPlayer();
-        player.setGameMode(GameMode.ADVENTURE);
-        Inventory inventory = e.getPlayer().getInventory();
-        inventory.clear();
         int slot = hubPlugin.getConfig().getInt("server-compass-slot");
-        player.getInventory().setItem(slot, compassItem);
+
+        boolean hasCompassItem = false;
+        for (ItemStack item : player.getInventory().getContents()) {
+            if (item != null && item.isSimilar(compassItem)) {
+                hasCompassItem = true;
+                break;
+            }
+        }
+
+        if (!hasCompassItem) {
+            player.getInventory().setItem(slot, compassItem);
+        }
     }
 }
 
