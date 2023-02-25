@@ -16,6 +16,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
@@ -138,18 +139,28 @@ public class ServerCompass implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent e) {
         Player player = e.getPlayer();
+        PlayerInventory inventory = player.getInventory();
         int slot = hubPlugin.getConfig().getInt("server-compass-slot");
 
-        boolean hasCompassItem = false;
-        for (ItemStack item : player.getInventory().getContents()) {
-            if (item != null && item.isSimilar(compassItem)) {
-                hasCompassItem = true;
-                break;
-            }
-        }
+        for (int i = 0; i < inventory.getSize(); i++) {
+            ItemStack compass = inventory.getItem(i);
 
-        if (!hasCompassItem) {
-            player.getInventory().setItem(slot, compassItem);
+            if (compass != null && compass.getType() == Material.COMPASS && compass.hasItemMeta() && compass.getItemMeta().hasDisplayName()
+                    && compass.getItemMeta().getDisplayName().equals(ChatColor.YELLOW + "Server Selector")) {
+                inventory.clear(i);
+            }
+
+            boolean hasCompassItem = false;
+            for (ItemStack item : player.getInventory().getContents()) {
+                if (item != null && item.isSimilar(compassItem)) {
+                    hasCompassItem = true;
+                    break;
+                }
+            }
+
+            if (!hasCompassItem) {
+                player.getInventory().setItem(slot, compassItem);
+            }
         }
     }
 }
